@@ -17,12 +17,15 @@ for i in range(N): # 집과 치킨의 좌표를 리스트에 넣어준다.
 
 visited = [False] * len(chick)
 
-def dfs(idx,cnt):
+print('home ',home)
+print('chick ', chick)
 
+def dfs(idx,cnt):
+    print(idx,cnt)
     global min_ans
 
     if cnt == M:
-        # print(visited[:])
+        print(visited[:])
 
         ans = 0
 
@@ -39,7 +42,7 @@ def dfs(idx,cnt):
 
     for i in range(idx,len(chick)):
         if not visited[i]:
-
+            print('i ',i)
             visited[i] = True
             dfs(i+1,cnt+1)
             visited[i]=False
