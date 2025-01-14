@@ -1,28 +1,21 @@
-import sys
-input = sys.stdin.readline
-
-def dfs(n, idx, rst):
-    if idx == N:
-        # eval 함수를 활용하여 문자열 상태에서 연산이 가능하도록
-        ans = eval(rst.replace(' ', ''))
-        # 연산 결과가 0이면 정답 리스트에 추가
-        if ans == 0:
-            ans_sik.append(rst)
-        return
-    else:
-        n_idx = idx + 1
-        # 공백인 경우 숫자를 이어붙이기
-        dfs(n, n_idx, rst + ' ' + str(n_idx))
-        # +인 경우 더하기
-        dfs(n, n_idx, rst + '+' + str(n_idx))
-        # -인 경우 빼기
-        dfs(n, n_idx, rst + '-' + str(n_idx))
-
 T = int(input())
-for _ in range(T):
-    N = int(input())
-    ans_sik = []
-    dfs(N, 1, '1')
-    for a in ans_sik:
-        print(a)
+
+def go(idx, sum, num , op, statement):
+    global n
+    if(idx == n):
+        sum += (num * op)
+        if(sum == 0):
+            print(statement)
+        return
+    go(idx+1, sum, (idx+1)+(10*num), op, statement + ' ' + str(idx+1))
+    go(idx+1, sum + (op * num), idx+1, 1, statement + '+' + str(idx+1))
+    go(idx+1, sum + (op * num), idx+1, -1, statement + '-' + str(idx+1))
+    
+array_num = []
+for i in range(T):
+    array_num.append(int(input()))
+
+for i in array_num:
+    n = i
+    go(1, 0, 1, 1, '1')
     print()
