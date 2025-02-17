@@ -7,6 +7,7 @@ public class Main {
   static int ans = 0;
   static int[][] vector={{0,-1},{0,1},{1,0},{-1,0}};
   static HashSet<Character> hash;
+  static boolean[] fastCheck = new boolean[26];
   public static void main(String[] args) throws IOException{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     hash = new HashSet<>();
@@ -27,19 +28,26 @@ public class Main {
     System.out.println(ans);
 	}
 
-  public static boolean letsgo(int x, int y, int count){
+  public static void letsgo(int x, int y, int count){
+    if (count + (R * C - count) <= ans) return; 
+
     ans = Math.max(ans, count);
-    hash.add(board[x][y]);
+    char current = board[x][y];
+
+    hash.add(current);
     for(int i=0;i<4;i++){
       int newx = x+vector[i][0];
       int newy = y+vector[i][1];
+      fastCheck[current - 'A'] = true; // 빠른 contains 체크용
       // System.out.println(hash);
-      if(0<=newx && newx<R && 0<=newy && newy<C && !hash.contains(board[newx][newy])){
+      if(0<=newx && newx<R && 0<=newy && newy<C){
+        char next = board[newx][newy];
+        if(!fastCheck[next-'A']) letsgo(newx,newy,count+1);
         // System.out.println(newx + ", " +newy + " => "+count);
-        letsgo(newx,newy,count+1);
+        
       }
     }
     hash.remove(board[x][y]);
-    return false;
+    fastCheck[current-'A'] = false;
   }
 }
