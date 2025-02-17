@@ -23,7 +23,7 @@ public class Main {
       }
     }
 
-    solve(0,0);
+    otaku(0,0);
 
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < 9; i++) {
@@ -36,7 +36,7 @@ public class Main {
 	}
 	
 	// 스도쿠 백트래킹 함수
-  static boolean solve(int row, int col) {
+  static boolean otaku(int row, int col) {
     if (row == 9) {
       return true;
     }
@@ -47,22 +47,21 @@ public class Main {
 
     // 이미 숫자가 있는 경우
     if (board[row][col] != 0) {
-      return solve(nextRow, nextCol);
+      return otaku(nextRow, nextCol);
     }
 
     // 1~9 숫자를 넣어보며 탐색
     for (int i = 1; i <= 9; i++) {
       if (!rowArr[row][i] && !colArr[col][i] && !square[row / 3][col / 3][i]) {
-        // 숫자 배치
         board[row][col] = i;
         rowArr[row][i] = true;
         colArr[col][i] = true;
         square[row / 3][col / 3][i] = true;
 
-        // 다음 칸 탐색
-        if (solve(nextRow, nextCol)) return true;
+        // 다음 칸 ㄱ
+        if (otaku(nextRow, nextCol)) return true;
 
-        // 백트래킹 (원래 상태로 되돌리기)
+        // 원복
         board[row][col] = 0;
         rowArr[row][i] = false;
         colArr[col][i] = false;
