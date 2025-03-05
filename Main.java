@@ -1,79 +1,60 @@
-import java.util.*;
 import java.io.*;
+import java.util.*;
 
 public class Main {
-  static int N, M;
-  static int R,C,D;
-  static int count =0;
-  static int[][] room;
-  static int[][] vector ={{-1, 0}, {0, 1}, {1, 0}, {0, -1}}; // 북, 동, 남, 서
+    static int N, M;
+    static int[][] board;
+    static PriorityQueue<Vertex> queue;
+    static int[][] first;
+    static int[][] cost;
+    public static void main(String[] args) throws IOException{
 
-  public static void main(String[] args) throws IOException{
-    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    StringTokenizer st = new StringTokenizer(br.readLine());
-    N = Integer.parseInt(st.nextToken());
-    M = Integer.parseInt(st.nextToken());
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-    room = new int[N][M];
-    StringTokenizer st1 = new StringTokenizer(br.readLine());
-    R = Integer.parseInt(st1.nextToken());
-    C = Integer.parseInt(st1.nextToken());
-    D = Integer.parseInt(st1.nextToken());
-    
-    Robot robot = new Robot(R,C);
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
 
-    for(int i=0;i<N;i++){
-      StringTokenizer st2 = new StringTokenizer(br.readLine());
-      for(int j=0;j<M;j++){
-        room[i][j] = Integer.parseInt(st2.nextToken());
-      }
-    }
-    robot.c = C;
-    robot.r = R;
-    robot.start();
-    System.out.println(count);
-  }
+        board = new int[N+1][N=1];
+        first = new int[N+1][N+1];
+        cost = new int[N+1][N+1];
 
-  public static class Robot{
-    int r,c;
-    public Robot(int r, int c ){
-      this.r = r;
-      this.c = c;
-    }
+        queue = new PriorityQueue<Vertex>();
 
-    public void start(){
-      int direction = D;
-      while(true){
-        if(room[r][c]==0) {
-          room[r][c] = 2;
-          count++;
+        for(int i=1;i<=M;i++){
+            st = new StringTokenizer(br.readLine());
+            int v1 = Integer.parseInt(st.nextToken());
+            int v2 = Integer.parseInt(st.nextToken());
+            int c = Integer.parseInt(st.nextToken());
+            board[v1][v2] = c;
+            board[v2][v1] = c;
         }
-        boolean flag = false;
-        for(int i=0;i<4;i++){
-          direction = (direction + 3) % 4; // 왼쪽으로 회전
-          int newy = r + vector[direction][0];
-          int newx = c + vector[direction][1];
-          if(0<=newx && newx<M && 0<=newy && newy<N && room[newy][newx]==0){
-            r = newy;
-            c = newx;
-            flag=true;
-            break;
-          }
-        }
-        // 만약 네 방향 모두 청소할 공간이 없으면 후진
-        if (!flag) {
-          int backY = r - vector[direction][0];
-          int backX = c - vector[direction][1];
 
-          // 후진 가능하면 후진, 벽이면 종료
-          if (backY >= 0 && backY < N && backX >= 0 && backX < M && room[backY][backX] != 1) {
-              r = backY;
-              c = backX;
-          } else {
-              break;
-          }
-      }
-      }
+        for(int i=1;i<=N;i++){
+            daik(i);
+        }
     }
-  }
+
+    static void daik(int start){
+        int[] firstToGo = new int[N+1];
+        queue.offer(new Vertex(start,0));
+
+        while(!queue.isEmpty()){
+            
+        }
+
+    }
+
+    static class Vertex implements Comparable<Vertex>{
+        int v, c;
+        Vertex(int v, int c){
+            this.v = v;
+            this.c = c;
+        }
+
+        @Override
+        public int compareTo(Vertex o) {
+            return this.c - o.c;
+        }
+    }
 }
