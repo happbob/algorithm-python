@@ -2,101 +2,91 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-    static int N;
-    static List<List<Node>> l = new ArrayList<>();
-    static int[] firstGo;
-    static int[] dist;
-    static int[][] answer;
-
+    static int N, M;
+    static Integer[][] board;
+    static PriorityQueue<Vertex> queue;
+    static Integer[][] first;
+    static Integer[][] cost;
     public static void main(String[] args) throws IOException{
+
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
         N = Integer.parseInt(st.nextToken());
-        int M = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
 
-        for(int i = 0; i<=N; i++)
-            l.add(new ArrayList<>());
-        answer = new int[N+1][N+1];
+        board = new Integer[N+1][N+1];
+        first = new Integer[N+1][N+1];
+        cost = new Integer[N+1][N+1];
 
-        while(M-->0){
+        queue = new PriorityQueue<Vertex>();
+
+        for(int i=1;i<=M;i++){
             st = new StringTokenizer(br.readLine());
-
-            int A = Integer.parseInt(st.nextToken());
-            int B = Integer.parseInt(st.nextToken());
-            int val = Integer.parseInt(st.nextToken());
-
-            l.get(A).add(new Node(B, val));
-            l.get(B).add(new Node(A, val));
+            int v1 = Integer.parseInt(st.nextToken());
+            int v2 = Integer.parseInt(st.nextToken());
+            int c = Integer.parseInt(st.nextToken());
+            board[v1][v2] = c;
+            board[v2][v1] = c;
         }
 
-        for(int i = 1; i<=N; i++)
-            dijkstra(i);
-
-        for(int i = 1; i<=N; i++){
-            for(int j = 1; j<=N; j++) {
-                if(i == j)
-                    System.out.print("- ");
-                else
-                    System.out.print(answer[i][j] + " ");
+        for(int i=1;i<=N;i++){
+            for(int j=1;j<=N;j++){
+                if(i==j) cost[i][j] = 0;
+                else cost[i][j] = Integer.MAX_VALUE;
             }
-            System.out.println();
         }
+
+        for(int i=1;i<=N;i++){
+            daik(i);
+        }
+        StringBuffer sb = new StringBuffer();
+        for(int i=1;i<=N;i++){
+            for(int j=1;j<=N;j++){
+                if(i==j) sb.append("- ");
+                else sb.append(first[i][j] + " ");
+            }
+            sb.append("\n");
+        }
+        System.out.println(sb);
     }
 
-    static void dijkstra(int vertex){
-        firstGo = new int[N+1];
-        for(int i = 1; i<=N; i++) {
-            if(i == vertex)
-                firstGo[i] = 0;
-            else
-                firstGo[i] = i;
+    static void daik(int start){
+        Integer[] firstToGo = new Integer[N+1];
+        for(int i=1;i<=N;i++){
+            if(i==start) firstToGo[i] = 0;
+            else firstToGo[i] = i;
         }
+        queue.offer(new Vertex(start,0));
 
-        dist = new int[N+1];
-        for(int i = 1; i<=N; i++){
-            if(i == vertex)
-                dist[i] = 0;
-            else
-                dist[i] = Integer.MAX_VALUE;
-        }
+        while(!queue.isEmpty()){
+            Vertex v = queue.poll();
+            for(int i=1;i<=N;i++){
+                if(board[v.v][i]!=null){
+                    if(cost[start][i] > cost[start][v.v] + board[v.v][i]){
+                        cost[start][i] = cost[start][v.v] + board[v.v][i];
+                        
+                        queue.offer(new Vertex(i,board[v.v][i]));
 
-        Queue<Node> q = new PriorityQueue<>();
-        q.offer(new Node(vertex, 0));
-
-        while(!q.isEmpty()){
-            Node a = q.poll();
-
-            for(int i = 0; i<l.get(a.vertex).size(); i++){
-                Node nextV = l.get(a.vertex).get(i);
-
-                if(dist[nextV.vertex] > dist[a.vertex] + nextV.value){
-                    dist[nextV.vertex] = dist[a.vertex] + nextV.value;
-                    q.offer(new Node(nextV.vertex, dist[nextV.vertex]));
-
-                    //처음 while문을 반복할 때를 제거
-                    if(a.vertex == vertex)
-                        continue;
-
-                    firstGo[nextV.vertex] = firstGo[a.vertex];
+                        if(v.v==start) continue;
+                        firstToGo[i] = firstToGo[v.v];
+                    }
                 }
             }
         }
-
-        for(int i = 1; i<=N; i++)
-            answer[vertex][i] = firstGo[i];
-    }
-}
-class Node implements Comparable<Node>{
-    int vertex, value;
-
-    Node(int vertex, int value){
-        this.vertex = vertex;
-        this.value = value;
+        first[start] = firstToGo;
     }
 
-    @Override
-    public int compareTo(Node a){
-        return this.value - a.value;
+    static class Vertex implements Comparable<Vertex>{
+        int v, c;
+        Vertex(int v, int c){
+            this.v = v;
+            this.c = c;
+        }
+
+        @Override
+        public int compareTo(Vertex o) {
+            return this.c - o.c;
+        }
     }
 }
