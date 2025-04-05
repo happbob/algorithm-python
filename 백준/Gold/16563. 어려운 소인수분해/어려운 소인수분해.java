@@ -2,43 +2,40 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-    public static void main(String[] args) throws IOException{
+    static int N;
+    static int[] primes;
+    public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringBuilder sb = new StringBuilder();
-        int n = Integer.parseInt(br.readLine());
-
-        int now, r;
-        int arr[] = new int[5000001];
-
-        //소수만 남기기
-        for(int i=2; i<5000001; i++) {
-            if(arr[i] != 0) continue;
-
-            arr[i] = i;
-
-            for(r=2; r*i<5000001; r++) {
-                if(arr[i*r] == 0) arr[i*r] = i;
-            }
-        }
-
+        N = Integer.parseInt(br.readLine());
+        primes = new int[5000001];
+        getPrimes();
         StringTokenizer st = new StringTokenizer(br.readLine());
-        for(int i=0; i<n; i++) {
-            now = Integer.parseInt(st.nextToken());
-            r = 2;
-
-            //ki는 5000000보다 작거나 같다.
-            while(true) {
-                if(arr[now] == now){
-                    sb.append(now).append(" ");
+        StringBuffer sb = new StringBuffer();
+        for(int i=0;i<N;i++){
+            int buff = Integer.parseInt(st.nextToken());
+            while(true){
+                if(buff==1) {
+                    sb.append("\n");
                     break;
                 }
-                sb.append(arr[now]).append(" ");
-                now /= arr[now];
+                sb.append(primes[buff]).append(" ");
+                buff = buff/primes[buff];
             }
-
-            sb.append("\n");
         }
+        System.out.println(sb);
+    }
 
-        System.out.print(sb);
+    // 소인수 분해를 하면서 각 숫자에 대한 최소 소수를 저장해보자
+    public static void getPrimes(){
+        for(int i=2;i<5000000;i++){
+            if(primes[i]!=0) continue;
+            primes[i] = i;
+            for(int j=2*i;j<=5000000;j+=i){
+                if(primes[j]==0){
+                    primes[j] = i;
+                }
+            }
+        }
     }
 }
+
