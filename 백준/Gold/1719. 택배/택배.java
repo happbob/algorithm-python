@@ -2,30 +2,27 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-    static int N, M;
+    static int N,M;
     static Integer[][] board;
-    static Integer[][] cost;
-    static Integer[][] first;
-    static PriorityQueue<Vertex> queue;
+    static int[][] cost;
+    static int[][] first;
+    
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
         board = new Integer[N+1][N+1];
-        cost = new Integer[N+1][N+1];
-        first = new Integer[N+1][N+1];
-        
-        for(int i=1;i<=M;i++){
+        cost = new int[N+1][N+1];
+        first = new int[N+1][N+1];
+        for(int i=0;i<M;i++){
             st = new StringTokenizer(br.readLine());
-            int a = Integer.parseInt(st.nextToken());
-            int b = Integer.parseInt(st.nextToken());
+            int x = Integer.parseInt(st.nextToken());
+            int y = Integer.parseInt(st.nextToken());
             int c = Integer.parseInt(st.nextToken());
-
-            board[a][b] = c;
-            board[b][a] = c;
+            board[x][y] = c;
+            board[y][x] = c;
         }
-
         for(int i=1;i<=N;i++){
             for(int j=1;j<=N;j++){
                 if(i==j) cost[i][j] = 0;
@@ -34,7 +31,7 @@ public class Main {
         }
 
         for(int i=1;i<=N;i++){
-            go(i);
+            cal(i);
         }
 
         StringBuffer sb = new StringBuffer();
@@ -49,41 +46,50 @@ public class Main {
         }
 
         System.out.println(sb);
-
     }
 
-    static public void go(int start){
-        Integer[] firstToGo = new Integer[N+1];
-        for(int i=1;i<=N;i++){
-            if(i==start) firstToGo[i] = 0;
-            else firstToGo[i] = i;
-        }
+    static void cal(int start){
+        // 처음 시작하는 부분부터 연산 시작
 
-        queue = new PriorityQueue<Vertex>((v1,v2)->v1.c - v2.c);
-        queue.offer(new Vertex(start,0));
+        // 우선순위 큐 생성
+        PriorityQueue<Vertex> queue = new PriorityQueue<Vertex>();
+
+        // 처음 들르는 곳 초기화
+        int[] firstArray = new int[N+1];
+        for(int i=1;i<=N;i++){
+            if(i==start) firstArray[i] = 0;
+            else firstArray[i]=i;
+        }
+        queue.offer(new Vertex(start, 0));
         while(!queue.isEmpty()){
-            Vertex current = queue.poll();
+            Vertex currentV = queue.poll();
             for(int i=1;i<=N;i++){
-                if(i==current.v) continue;
-                if(board[current.v][i]!=null){
-                    if(cost[start][i] > cost[start][current.v] + board[current.v][i]){
-                        cost[start][i] = cost[start][current.v] + board[current.v][i];
-                        queue.offer(new Vertex(i, board[current.v][i]));
-                        if(start==current.v) continue;
-                        firstToGo[i] = firstToGo[current.v];
+                if(i == start) continue;
+                if(board[currentV.v][i] != null){
+                    if(cost[start][i] > cost[start][currentV.v] + board[currentV.v][i]){
+                        cost[start][i] = cost[start][currentV.v] + board[currentV.v][i];
+                        queue.offer(new Vertex(i, board[currentV.v][i]));
+                        if(start==currentV.v) continue;
+                        firstArray[i] = firstArray[currentV.v];
                     }
                 }
             }
         }
-        first[start] = firstToGo;
+
+        first[start] = firstArray;
     }
 
-    static class Vertex {
-        int v;
-        int c;
-        Vertex(int v, int c){
+    static class Vertex implements Comparable<Vertex>{
+        int v,c;
+        public Vertex(int v,int c){
             this.v = v;
             this.c = c;
         }
+
+        @Override
+        public int compareTo(Vertex vertex){
+            return this.c - vertex.c;
+        }
     }
 }
+
